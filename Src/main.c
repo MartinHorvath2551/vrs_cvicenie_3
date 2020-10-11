@@ -67,35 +67,49 @@ int main(void)
 	// No pull-up, pull-down for GPIOA 4
 		*((volatile uint32_t *)((uint32_t)(GPIOA_BASE_ADDR + GPIOA_PUPDR_REG))) &= ~(0x3 << 10);
 
-	//	uint8_t button;
-	//	EDGE_TYPE edgeMain;
-
+		uint8_t button;
+		EDGE_TYPE edgeMain;
+		int changeLed=0;
+		int ledState=0;
 
   while (1)
   {
-
-
-	 /*if(BUTTON_GET_STATE)
+	  if(ledState==1)
 	  {
-		  // 0.25s delay
-		  for(uint16_t i = 0; i < 0xFF00; i++){}
-		  LED_ON;
-		  // 0.25s delay
-		  for(uint16_t i = 0; i < 0xFF00; i++){}
-		  LED_OFF;
+		  LED_ON
 	  }
 	  else
 	  {
-		  // 1s delay
-		  for(uint32_t i = 0; i < 0xFFFF0; i++){}
-		  LED_ON;
-		  // 1s delay
-		  for(uint32_t i = 0; i < 0xFFFF0; i++){}
-		  LED_OFF;
-	  }*/
+		  LED_OFF
+	  }
 
-	  //button = BUTTON_GET_STATE;
-	  //edgeMain = edgeDetect(button,5);
+	  button = BUTTON_GET_STATE;
+	  edgeMain = edgeDetect(button,5);
+
+	 if((edgeMain==RISE)||(edgeMain==FALL))
+	  {
+		  changeLed=1;
+	  }
+	  else if(edgeMain==NONE)
+	  {
+		  changeLed=0;
+	  }
+
+	 if(changeLed==1)
+	 {
+		 if(ledState==1)
+		 {
+			 ledState=0;
+			 LED_OFF
+		 }
+		 else
+		 {
+			 ledState=1;
+			 LED_ON
+		 }
+	 }
+
+
 
   }
 
@@ -111,15 +125,19 @@ static EDGE_TYPE edgeDetect(uint8_t pin_state, uint8_t samples)
 
 	  if (!toggle_initialized)
 	  {
-		  toggle = 1;
+		  toggle = 0;
 		  toggle_initialized = true;
+
+	  }
+
+	  if(!toggle)
+	  {
+		  toggle++;
 		  pin_state_before=pin_state;
 		  edge = NONE;
 		  return edge;
 	  }
-
-
-	if(toggle)
+	  else if(toggle)
 			{
 
 			if(pin_state_before!=pin_state)
@@ -143,6 +161,7 @@ static EDGE_TYPE edgeDetect(uint8_t pin_state, uint8_t samples)
 
 				if((toggle>samples))
 					{
+					toggle=0;
 					return edge;
 					}
 				}
