@@ -21,6 +21,9 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "assignment.h"
+#include <stdbool.h>
+
+
 
 int main(void)
 {
@@ -64,9 +67,15 @@ int main(void)
 	// No pull-up, pull-down for GPIOA 4
 		*((volatile uint32_t *)((uint32_t)(GPIOA_BASE_ADDR + GPIOA_PUPDR_REG))) &= ~(0x3 << 10);
 
+	//	uint8_t button;
+	//	EDGE_TYPE edgeMain;
+
+
   while (1)
   {
-	 if(BUTTON_GET_STATE)
+
+
+	 /*if(BUTTON_GET_STATE)
 	  {
 		  // 0.25s delay
 		  for(uint16_t i = 0; i < 0xFF00; i++){}
@@ -83,12 +92,66 @@ int main(void)
 		  // 1s delay
 		  for(uint32_t i = 0; i < 0xFFFF0; i++){}
 		  LED_OFF;
-	  }
+	  }*/
+
+	  //button = BUTTON_GET_STATE;
+	  //edgeMain = edgeDetect(button,5);
+
   }
 
 }
 
 /* USER CODE BEGIN 4 */
+static EDGE_TYPE edgeDetect(uint8_t pin_state, uint8_t samples)
+{
+	static uint8_t pin_state_before;
+	static EDGE_TYPE edge;
+	static int toggle;
+	static bool toggle_initialized;
+
+	  if (!toggle_initialized)
+	  {
+		  toggle = 1;
+		  toggle_initialized = true;
+		  pin_state_before=pin_state;
+		  edge = NONE;
+		  return edge;
+	  }
+
+
+	if(toggle)
+			{
+
+			if(pin_state_before!=pin_state)
+				{
+					if((pin_state==0) && (pin_state_before==16)&& ((edge==NONE)||(edge==RISE)))
+					{
+						edge=FALL;
+						toggle=1;
+						pin_state_before=pin_state;
+					}
+					else if((pin_state==16) && (pin_state_before==0)&& ((edge==NONE)||(edge==FALL)))
+					{
+						edge=RISE;
+						toggle=1;
+						pin_state_before=pin_state;
+					}
+				}
+			else
+				{
+				toggle++;
+
+				if((toggle>samples))
+					{
+					return edge;
+					}
+				}
+			}
+
+	return NONE;
+
+}
+
 
 /* USER CODE END 4 */
 

@@ -46,14 +46,16 @@
 
 #define BUTTON_GET_STATE		*((volatile uint32_t *)((uint32_t)(GPIOA_BASE_ADDR + GPIOA_IDR_REG))) & (1 << 4)			/* Add BUTTON_GET_STATE implementation here. */
 
-#define EDGE_TYPE 				edgeDetect(uint8_t pin_state, uint8_t samples);
-
 typedef enum
 {
      NONE = 0,
      RISE = 1,
      FALL = 2
 } EDGE_TYPE;
+
+
+static EDGE_TYPE edgeDetect(uint8_t pin_state, uint8_t samples);
+
 
 
 #endif /* ASSIGNMENT_H_ */
