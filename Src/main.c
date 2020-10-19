@@ -51,21 +51,21 @@ int main(void)
 
   /* GPIOA pin 3 and 4 setup */
 	// Set mode for GPIOA pin 3
-		*((volatile uint32_t *)((uint32_t)GPIOA_BASE_ADDR)) &= ~(uint32_t)(0x3 << 8);
+		*((volatile uint32_t *)((uint32_t)GPIOA_BASE_ADDR)) &= ~(uint32_t)(0x3 << 6);
 	// Set mode for GPIOA pin 4
-		*((volatile uint32_t *)((uint32_t)GPIOA_BASE_ADDR)) |= (uint32_t)(1 << 10);
+		*((volatile uint32_t *)((uint32_t)GPIOA_BASE_ADDR)) |= (uint32_t)(1 << 8);
 
 	//type your code for GPIOA pins setup here:
 	// OTYPER
-		*((volatile uint32_t *)((uint32_t)(GPIOA_BASE_ADDR + GPIOA_OTYPER_REG))) &= ~(1 << 5);
+		*((volatile uint32_t *)((uint32_t)(GPIOA_BASE_ADDR + GPIOA_OTYPER_REG))) &= ~(1 << 4);
 	// OSPEEDR for GPIOA pin 4
-		*((volatile uint32_t *)((uint32_t)(GPIOA_BASE_ADDR + GPIOA_OSPEEDER_REG))) &= ~(0x3 << 10);
+		*((volatile uint32_t *)((uint32_t)(GPIOA_BASE_ADDR + GPIOA_OSPEEDER_REG))) &= ~(0x3 << 8);
 
 	// GPIO PUPDR register, reset
 	// Pull-up for GPIOA 3
-		*((volatile uint32_t *)((uint32_t)(GPIOA_BASE_ADDR + GPIOA_PUPDR_REG))) |= (1 << 8);
+		*((volatile uint32_t *)((uint32_t)(GPIOA_BASE_ADDR + GPIOA_PUPDR_REG))) |= (1 << 6);
 	// No pull-up, pull-down for GPIOA 4
-		*((volatile uint32_t *)((uint32_t)(GPIOA_BASE_ADDR + GPIOA_PUPDR_REG))) &= ~(0x3 << 10);
+		*((volatile uint32_t *)((uint32_t)(GPIOA_BASE_ADDR + GPIOA_PUPDR_REG))) &= ~(0x3 << 8);
 
 		uint8_t button;
 		EDGE_TYPE edgeMain;
@@ -142,13 +142,13 @@ static EDGE_TYPE edgeDetect(uint8_t pin_state, uint8_t samples)
 
 			if(pin_state_before!=pin_state)
 				{
-					if((pin_state==0) && (pin_state_before==16)&& ((edge==NONE)||(edge==RISE)))
+					if((pin_state==0) && (pin_state_before==8)&& ((edge==NONE)||(edge==RISE)))
 					{
 						edge=FALL;
 						toggle=1;
 						pin_state_before=pin_state;
 					}
-					else if((pin_state==16) && (pin_state_before==0)&& ((edge==NONE)||(edge==FALL)))
+					else if((pin_state==8) && (pin_state_before==0)&& ((edge==NONE)||(edge==FALL)))
 					{
 						edge=RISE;
 						toggle=1;
